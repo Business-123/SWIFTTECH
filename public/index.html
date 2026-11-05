@@ -64,7 +64,7 @@ footer{padding:28px 0;color:var(--muted);font-size:.92rem;border-top:1px solid v
     <p>Swift Tech is a digital services company in Ghana. We design, build and maintain websites, web applications and custom software for small businesses and individuals.</p>
     <a class="btn" href="#contact">Start a project</a><a class="btn alt" href="#pay">Pay an invoice</a>
   </div>
-  <div class="bolt">Pay your project fee in <b>GHS</b> by card or mobile money.<small>Payments are processed securely by Paystack.</small></div>
+  <div class="bolt">Pay your project fee in <b>GHS or USD</b> by card or mobile money.<small>Payments are processed securely by Paystack.</small></div>
 </header>
 </div>
 
@@ -80,11 +80,11 @@ footer{padding:28px 0;color:var(--muted);font-size:.92rem;border-top:1px solid v
 </div></section>
 
 <section id="pricing" class="policy"><div class="wrap">
-  <h2>Pricing</h2><p class="sub">Starting prices in Ghana cedis. Final quotes depend on scope.</p>
+  <h2>Pricing</h2><p class="sub">Starting prices in Ghana cedis (GHS) and US dollars (USD). Final quotes depend on scope.</p>
   <div class="grid">
-    <div class="card"><h3>Starter website</h3><div class="price">GHS 1,500<small> one-time</small></div><ul><li>Up to 5 pages</li><li>Mobile-friendly design</li><li>Contact form</li></ul></div>
-    <div class="card"><h3>Business web app</h3><div class="price">GHS 5,000<small> and up</small></div><ul><li>Custom features</li><li>Admin dashboard</li><li>Payment integration</li></ul></div>
-    <div class="card"><h3>Maintenance plan</h3><div class="price">GHS 200<small> / month</small></div><ul><li>Updates and backups</li><li>Security monitoring</li><li>Priority support</li></ul></div>
+    <div class="card"><h3>Starter website</h3><div class="price">GHS 1,500<small> / USD 100 one-time</small></div><ul><li>Up to 5 pages</li><li>Mobile-friendly design</li><li>Contact form</li></ul></div>
+    <div class="card"><h3>Business web app</h3><div class="price">GHS 5,000<small> / USD 350 and up</small></div><ul><li>Custom features</li><li>Admin dashboard</li><li>Payment integration</li></ul></div>
+    <div class="card"><h3>Maintenance plan</h3><div class="price">GHS 200<small> / USD 15 per month</small></div><ul><li>Updates and backups</li><li>Security monitoring</li><li>Priority support</li></ul></div>
   </div>
 </div></section>
 
@@ -98,19 +98,20 @@ footer{padding:28px 0;color:var(--muted);font-size:.92rem;border-top:1px solid v
       <option>Project fee or deposit</option><option>Invoice payment</option>
       <option>Monthly maintenance plan</option><option>Subscription</option>
     </select>
-    <label for="amount">Amount (GHS)</label><input id="amount" type="number" min="1" step="0.01" inputmode="decimal" placeholder="e.g. 500">
+    <label for="currency">Currency</label><select id="currency"><option value="GHS">GHS (Ghana cedis)</option><option value="USD">USD (US dollars)</option></select>
+    <label for="amount">Amount</label><input id="amount" type="number" min="1" step="0.01" inputmode="decimal" placeholder="e.g. 500">
     <label for="ref">Invoice or project reference (optional)</label><input id="ref">
     <p style="margin-top:20px"><button class="btn" id="payBtn" type="button">Pay with Paystack</button></p>
     <div id="msg" role="status" aria-live="polite"></div>
-    <p class="note">Card, mobile money and bank options are shown at checkout. We never see or store your card details.</p>
+    <p class="note">Payment options shown at checkout depend on the currency you choose. We never see or store your card details.</p>
   </div>
 </div></section>
 
 <section id="contact" class="policy"><div class="wrap">
   <h2>Contact</h2><p class="sub">Tell us what you need and we will reply with a quote.</p>
   <div class="grid">
-    <div class="card"><h3>Email</h3><p><a href="mailto:hello@yourdomain.com">hello@yourdomain.com</a></p></div>
-    <div class="card"><h3>Phone / WhatsApp</h3><p>+233 XX XXX XXXX</p></div>
+    <div class="card"><h3>Email</h3><p><a href="mailto:swifttech.web@gmail.com">swifttech.web@gmail.com</a></p></div>
+    <div class="card"><h3>Phone / WhatsApp</h3><p><a href="tel:+233504197075">+233 50 419 7075</a></p></div>
     <div class="card"><h3>Location</h3><p>Accra, Ghana</p></div>
   </div>
   <h3 style="margin-top:40px">Terms and refund policy</h3>
@@ -130,18 +131,20 @@ document.getElementById('payBtn').addEventListener('click',()=>{
   const email=document.getElementById('email').value.trim();
   const amount=parseFloat(document.getElementById('amount').value);
   const type=document.getElementById('type').value;
+  const currency=document.getElementById('currency').value;
   const ref=document.getElementById('ref').value.trim();
   if(!name) return say('Enter your full name.');
   if(!/^\S+@\S+\.\S+$/.test(email)) return say('Enter a valid email address.');
-  if(!(amount>=1)) return say('Enter an amount of at least GHS 1.');
+  if(!(amount>=1)) return say('Enter an amount of at least 1 '+currency+'.');
   if(!window.PAYSTACK_PUBLIC_KEY) return say('Payments are not set up yet. Add PAYSTACK_PUBLIC_KEY on the server.');
   const handler=PaystackPop.setup({
     key:window.PAYSTACK_PUBLIC_KEY,
     email:email,
     amount:Math.round(amount*100),
-    currency:'GHS',
+    currency:currency,
     metadata:{custom_fields:[
       {display_name:'Customer name',variable_name:'customer_name',value:name},
+      {display_name:'Currency',variable_name:'currency',value:currency},
       {display_name:'Payment for',variable_name:'payment_for',value:type},
       {display_name:'Reference',variable_name:'invoice_ref',value:ref}]},
     callback:function(r){
